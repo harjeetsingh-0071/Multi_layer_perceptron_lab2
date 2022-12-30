@@ -1,0 +1,79 @@
+import pandas as pd
+import numpy as np
+import math
+import matplotlib.pyplot as mp
+np.random.seed(30)
+x = np.sort(np.random.uniform(low=0, high=1, size=(30)))
+w1 = np.random.rand(6)
+print(w1)
+w2 = np.random.rand(6)
+b1 = np.random.rand(6)
+b = np.random.rand(1)
+
+def custom_func(x):
+    eq = (1 + 0.6 * math.sin(2 * np.pi * x / 0.7)) + (0.3 * math.sin(2 * np.pi * x)) / 2
+    return eq
+for j in range (10000):
+    print(j)
+    for i in range(len(x)):
+        l_r = 0.05
+        l1n1 = w1[0] * x[i] + b1[0]         #layer1
+        l1n2 = w1[1] * x[i] + b1[1]
+        l1n3 = w1[2] * x[i] + b1[2]
+        l1n4 = w1[3] * x[i] + b1[3]
+        l1n5 = w1[4] * x[i] + b1[4]
+        l1n6 = w1[5] * x[i] + b1[5]
+        l1a1 = 1 / (1 + np.exp(-l1n1))                    #layer1 activation
+        l1a2 = 1 / (1 + np.exp(-l1n2))
+        l1a3 = 1 / (1 + np.exp(-l1n3))
+        l1a4 = 1 / (1 + np.exp(-l1n4))
+        l1a5 = 1 / (1 + np.exp(-l1n5))
+        l1a6 = 1 / (1 + np.exp(-l1n6))
+        y = w2[0]*l1a1+w2[1]*l1a2+w2[2]*l1a3+w2[3]*l1a4+w2[4]*l1a5+w2[5]*l1a6  +  b  #outpurt
+        error  =  custom_func(x[i]) - y
+        error_g_1 = error * np.multiply(w2[0],l1a1*(1-l1a1))     #error gradient layer_hidden
+        error_g_2 = error * np.multiply(w2[1],l1a2*(1-l1a2))
+        error_g_3 = error * np.multiply(w2[2], l1a3*(1-l1a3))
+        error_g_4 = error * np.multiply(w2[3], l1a4*(1-l1a4))
+        error_g_5 = error * np.multiply(w2[4], l1a5*(1-l1a5))
+        error_g_6 = error * np.multiply(w2[5], l1a6*(1-l1a6))
+        w1[0] = w1[0] + l_r * error_g_1 * x[i]
+        w1[1] = w1[1] + l_r * error_g_2 * x[i]
+        w1[2] = w1[2] + l_r * error_g_3 * x[i]
+        w1[3] = w1[3] + l_r * error_g_4 * x[i]
+        w1[4] = w1[4] + l_r * error_g_5 * x[i]
+        w1[5] = w1[5] + l_r * error_g_6 * x[i]
+        w2[0] = w2[0] + l_r * error * l1a1
+        w2[1] = w2[1] + l_r * error * l1a2
+        w2[2] = w2[2] + l_r * error * l1a3
+        w2[3] = w2[3] + l_r * error * l1a4
+        w2[4] = w2[4] + l_r * error * l1a5
+        w2[5] = w2[5] + l_r * error * l1a6
+        b1[0] = b1[0] + l_r * error_g_1
+        b1[1] = b1[1] + l_r * error_g_2
+        b1[2] = b1[2] + l_r * error_g_3
+        b1[3] = b1[3] + l_r * error_g_4
+        b1[4] = b1[4] + l_r * error_g_5
+        b1[5] = b1[5] + l_r * error_g_6
+        b = b + l_r * error
+plt = np.zeros(0)
+ori = np.zeros(0)
+for u in range(len(x)):
+    l1n1 = w1[0] * x[u] + b1[0]  # layer1
+    l1n2 = w1[1] * x[u] + b1[1]
+    l1n3 = w1[2] * x[u] + b1[2]
+    l1n4 = w1[3] * x[u] + b1[3]
+    l1n5 = w1[4] * x[u] + b1[4]
+    l1n6 = w1[5] * x[u] + b1[5]
+    l1a1 = 1 / (1 + np.exp(-l1n1))  # layer1 activation
+    l1a2 = 1 / (1 + np.exp(-l1n2))
+    l1a3 = 1 / (1 + np.exp(-l1n3))
+    l1a4 = 1 / (1 + np.exp(-l1n4))
+    l1a5 = 1 / (1 + np.exp(-l1n5))
+    l1a6 = 1 / (1 + np.exp(-l1n6))
+    out = l1a1 * w2[0] + l1a2 * w2[1] + l1a3 * w2[2] + l1a4 * w2[3] + l1a5 * w2[4] + l1a6 * w2[5] + b
+    plt = np.append(plt,out)
+    ori = np.append(ori,custom_func(x[u]))
+mp.plot(x,plt)
+mp.plot(x,ori)
+mp.show()
